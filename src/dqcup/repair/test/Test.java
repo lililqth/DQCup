@@ -23,7 +23,7 @@ public class Test {
 		if (truth.size() != 0) {
 			startTime = System.currentTimeMillis();
 			found = dr.repair("input/DB-easy.txt");
-			TestUtil.findDifferent(truth, found);
+//			TestUtil.findDifferent(truth, found);
 			endTime = System.currentTimeMillis();
 
 			double findAccuracy = TestUtil.findAccuracy(truth, found);
@@ -35,7 +35,14 @@ public class Test {
 			avgFindAccuracy += findAccuracy;
 			avgRepairAccuracy += repairAccuracy;
 		}
-
+		
+		/*test normal*/
+		startTime = System.currentTimeMillis();
+		found = dr.repair("input/DB-normal.txt");
+		endTime = System.currentTimeMillis();
+		System.out.println("normal-Time:" + (endTime - startTime));
+		/***************************************/
+		
 		dr = new DatabaseRepairImpl();
 		truth = TestUtil.readTruth("input/Truth-normal.txt");
 		if (truth.size() != 0) {

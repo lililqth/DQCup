@@ -19,20 +19,20 @@ public class DatabaseRepairImpl implements DatabaseRepair {
 		HashSet<RepairedCell> result = new HashSet<RepairedCell>();
 		
 		// 正则表达式
-		RegEx reg=new RegEx(tuples);
-		result=reg.verify(result);
+//		RegEx reg=new RegEx(tuples);
+//		result=reg.verify(result);
 		
 		
 		Vote vote = new Vote(tuples);
 		result.addAll(vote.repair());
 		
 		// name决定zip
-		FD fd = new FD(tuples);
-		result.addAll(fd.repair());
+//		FD fd = new FD(tuples);
+//		result.addAll(fd.repair());
 		
 		// stadd决定zip
-		FD1 fd1 = new FD1(tuples);
-		result.addAll(fd1.repair());
+//		FD1 fd1 = new FD1(tuples);
+//		result.addAll(fd1.repair());
 		
 		
 		
