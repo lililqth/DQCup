@@ -35,6 +35,13 @@ public class FD1 {
 			}else{
 				continue;
 			}
+			
+//			StringBuilder sBuilder = new StringBuilder();
+//			if (tuple.getValue("STNUM") != null){
+//				sBuilder.append(tuple.getValue("STADD")).append(":").append(tuple.getValue("STNUM"));
+//			}else{
+//				continue;
+//			}
 			String Name = sBuilder.toString();
 			
 			YRecord record = new YRecord(Name);
@@ -125,3 +132,32 @@ public class FD1 {
 		return vote();
 	}
 }
+
+class YRecord {
+	public String maxKey;
+	public int maxLength;
+	public String X;
+	HashMap<String,ArrayList<String>> ZipCodeMap;
+	public YRecord(String X) {
+		this.X = X;
+		ZipCodeMap = new HashMap<String, ArrayList<String>>();
+	}
+
+	public int hashCode() {
+		return X.hashCode();
+	}
+
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (obj instanceof YRecord) {
+			YRecord r = (YRecord) obj;
+			if (this.X.equals(r.X)) {
+				return true;
+			}
+		}
+		return false;
+	}
+}
+

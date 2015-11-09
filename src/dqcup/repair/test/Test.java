@@ -37,10 +37,10 @@ public class Test {
 		}
 		
 		/*test normal*/
-		startTime = System.currentTimeMillis();
-		found = dr.repair("input/DB-normal.txt");
-		endTime = System.currentTimeMillis();
-		System.out.println("normal-Time:" + (endTime - startTime));
+//		startTime = System.currentTimeMillis();
+//		found = dr.repair("input/DB-normal.txt");
+//		endTime = System.currentTimeMillis();
+//		System.out.println("normal-Time:" + (endTime - startTime));
 		/***************************************/
 		
 		dr = new DatabaseRepairImpl();

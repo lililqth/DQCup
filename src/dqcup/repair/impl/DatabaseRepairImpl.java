@@ -22,20 +22,20 @@ public class DatabaseRepairImpl implements DatabaseRepair {
 		RegEx reg=new RegEx(tuples);
 		result=reg.verify(result);
 		
-		
+		// 进行单人投票
 		Vote vote = new Vote(tuples);
 		result.addAll(vote.repair());
 		
 		// name决定zip
-		FD fd = new FD(tuples);
-		result.addAll(fd.repair());
+		FD fdim = new FD(tuples);
+		result.addAll(fdim.repair());
 		
 		// stadd决定zip
-		FD1 fd1 = new FD1(tuples);
-		result.addAll(fd1.repair());
-		
-		
-		
+//		FD1 fd1 = new FD1(tuples);
+//		result.addAll(fd1.repair());
+//		
+//		FDImprov fdImp = new FDImprov(tuples);
+//		result.addAll(fdImp.repair());
 		return result;
 	}
 }
