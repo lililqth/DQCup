@@ -67,7 +67,8 @@ public class TestUtil {
 		if (found.size() != 0) {
 			HashMap<Integer, HashSet<String>> foundMap = new HashMap<Integer, HashSet<String>>();
 
-			for (RepairedCell cell : truth) {
+			for (RepairedCell cell : found) {
+				//System.out.println(cell);
 				HashSet<String> columnIds = null;
 				if (foundMap.get(cell.getRowId()) == null) {
 					columnIds = new HashSet<String>();
@@ -77,7 +78,7 @@ public class TestUtil {
 				columnIds.add(cell.getColumnId());
 				foundMap.put(cell.getRowId(), columnIds);
 			}
-			for (RepairedCell cell : found) {
+			for (RepairedCell cell : truth) {
 				if (foundMap.get(cell.getRowId()) == null||
 						(foundMap.get(cell.getRowId()) != null && 
 						(!foundMap.get(cell.getRowId()).contains(cell.getColumnId())))

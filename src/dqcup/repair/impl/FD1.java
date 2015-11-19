@@ -1,163 +1,108 @@
 package dqcup.repair.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
+
 import dqcup.repair.RepairedCell;
 import dqcup.repair.Tuple;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class FD1 {
 	public LinkedList<Tuple> tuples;
-	private HashSet<YRecord> XSet= new HashSet<YRecord>();
-	private String[] itemNameList = { "RUID", "CUID", "SSN", "FNAME", "MINIT", "LNAME", "STNUM", "STADD", "APMT",
-			"CITY", "STATE", "ZIP" };
 
 	public FD1(LinkedList<Tuple> tup) {
 		this.tuples = tup;
 	}
 
-	private void generateXSet()
-	{
-		Matcher isNum;
-		Pattern pattern;
-		for (Tuple tuple : tuples) {
-			// 有两种方式可以获取Tuple中某一列的值，用列的index(起始为第0列)或是用列名均可
-			
-			String stadd = tuple.getValue("STADD");
-			String stnum = tuple.getValue("STNUM");
-			pattern = Pattern.compile("PO Box [0-9]{1,4}");
-			isNum=pattern.matcher(stadd);
-			StringBuilder sBuilder = new StringBuilder();
-			if ( !isNum.matches() ){
-				sBuilder.append(stnum);
-				sBuilder.append(":");
-				sBuilder.append(stadd);
-			}else{
-				continue;
-			}
-			
-//			StringBuilder sBuilder = new StringBuilder();
-//			if (tuple.getValue("STNUM") != null){
-//				sBuilder.append(tuple.getValue("STADD")).append(":").append(tuple.getValue("STNUM"));
-//			}else{
-//				continue;
-//			}
-			String Name = sBuilder.toString();
-			
-			YRecord record = new YRecord(Name);
-			if (!XSet.contains(record)) {
-				// value所在的行数，也就是RUID存放到list中
-				ArrayList<String> list = new ArrayList<String>();
-				list.add(tuple.getValue("RUID"));
+	public HashSet<RepairedCell> repair() {
+		Collections.sort(tuples, new TupleCompare_STADD_CITY()); // 排序
 
-				// 将<value, list>对存放到对应的map中
-				String value = tuple.getValue("ZIP");
-				record.ZipCodeMap.put(value, list);
-				XSet.add(record);
-			} else {
-				//X(Name)在XSet中已经存在
-				//找到XSet中的位置
-				YRecord Item = null;
-				for (YRecord item : XSet) {
-					if (item.X.equals(Name))
-					{
-						Item = item;
-						break;
-					}
-				}
-
-				// 将行号加入到Name所对应的list(zipcode， RUID)中。。。。。Name->多个zipcode->多个RUID.
-				// 获取了ZipCode的值
-				String value = tuple.getValue("ZIP");
-				// 如果值在map中，在map对应的list中添加一个RUID
-				if (Item.ZipCodeMap.containsKey(value)){
-					ArrayList<String> list = (ArrayList<String>)Item.ZipCodeMap.get(value);
-					list.add(tuple.getValue("RUID"));
-					if (Item.maxLength < list.size()){
-						Item.maxLength = list.size();
-						Item.maxKey = value;
-					}
-				}else{
-					// 如果值不在map中，在map中添加一项
-					ArrayList<String> list = new ArrayList<String>();
-					list.add(tuple.getValue("RUID"));
-					// 将<value, list>对存放到对应的map中
-					Item.ZipCodeMap.put(value, list);
-					if (Item.maxLength == 0){
-						Item.maxLength = 1;
-						Item.maxKey = value;
-					}
-				}
-			}
-		}
-	}
-
-	//根据建立好的XSet进行投票
-	private HashSet<RepairedCell> vote()
-	{
 		HashSet<RepairedCell> result = new HashSet<RepairedCell>();
-		// 对每一个X的数据进行检查
-		for (YRecord record : XSet)
-		{
-			if (record.maxLength <= 1){
-				continue;
-			}
-			HashMap<String, ArrayList<String>> map = record.ZipCodeMap;
-			if(map.size() > 1)
-			{
-				Iterator iter = map.entrySet().iterator();
-				int maxNum = 0;
-				// 将票数较低的元素全部改过来
-				iter = map.entrySet().iterator();
-				while (iter.hasNext()) {
-					Map.Entry entry = (Map.Entry) iter.next();
-					ArrayList<String> val = (ArrayList<String>) entry.getValue();
-					String key = (String) entry.getKey();
-					if (val.size() < record.maxLength || key.equals("null"))
-					{
-						for (String str : val)
-						{
-							int RUID = Integer.parseInt(str);
-							result.add(new RepairedCell(RUID, "ZIP", record.maxKey));
+		RecordXY record = null;
+		Iterator<Tuple> iterator = tuples.iterator();
+		Tuple current = iterator.next();
+		Tuple next = iterator.next();
+		while (iterator.hasNext()) {
+			current = next;
+			next = iterator.next();
+
+			StringBuilder sBuilder2 = new StringBuilder();
+			StringBuilder sBuilder1 = new StringBuilder();
+			sBuilder2.append(current.getValue("STADD")).append(current.getValue("CITY"));
+					
+			sBuilder1.append(next.getValue("STADD")).append(next.getValue("CITY"));
+			boolean equal = sBuilder1.toString().equals(sBuilder2.toString());
+
+			if (equal) {
+				if (record == null) {
+					record = new RecordXY();
+				}
+				addRecord(current, record);
+			} else if (record != null) {
+				addRecord(current, record);
+				// 投票
+				HashMap<String, ArrayList<String>> map = record.valueMap;
+				if (map.size() > 1 && record.maxLength > 1) {
+					Iterator iter = map.entrySet().iterator();
+					while (iter.hasNext()) {
+						Map.Entry entry = (Map.Entry) iter.next();
+						ArrayList<String> val = (ArrayList<String>) entry.getValue();
+						String key = (String) entry.getKey();
+						if (val.size() < record.maxLength || key.equals("null")) {
+							for (String str : val) {
+								int RUID = Integer.parseInt(str);
+								result.add(new RepairedCell(RUID, "ZIP", record.maxKey));
+							}
 						}
 					}
+
 				}
+				// 刷新
+				record = null;
+			} else {
+				continue;
 			}
 		}
 		return result;
 	}
 
-	public HashSet<RepairedCell> repair() {
-		generateXSet();
-		return vote();
-	}
-}
-
-class YRecord {
-	public String maxKey;
-	public int maxLength;
-	public String X;
-	HashMap<String,ArrayList<String>> ZipCodeMap;
-	public YRecord(String X) {
-		this.X = X;
-		ZipCodeMap = new HashMap<String, ArrayList<String>>();
-	}
-
-	public int hashCode() {
-		return X.hashCode();
-	}
-
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (obj instanceof YRecord) {
-			YRecord r = (YRecord) obj;
-			if (this.X.equals(r.X)) {
-				return true;
+	private void addRecord(Tuple current, RecordXY record) {
+		// 建立value->RUID_List对
+		String value = current.getValue("ZIP");
+		// 如果value在key中已经存在了， 就直接把RUID加入对应的list
+		if (record.valueMap.containsKey(value)) {
+			ArrayList<String> list = record.valueMap.get(value);
+			list.add(current.getValue("RUID"));
+			if ((!value.equals("null")) && list.size() > record.maxLength) {
+				record.maxLength = list.size();
+				record.maxKey = value;
+			}
+		} else {
+			ArrayList<String> list = new ArrayList<String>();
+			list.add(current.getValue("RUID"));
+			// 将<value, list>对存放到对应的map中
+			record.valueMap.put(value, list);
+			if ((!value.equals("null")) && record.maxLength == 0) {
+				record.maxLength = 1;
+				record.maxKey = value;
 			}
 		}
-		return false;
 	}
 }
 
+
+class TupleCompare_STADD_CITY implements Comparator<Tuple> {
+	@Override
+	public int compare(Tuple o1, Tuple o2) {
+		StringBuilder sBuilder2 = new StringBuilder();
+		StringBuilder sBuilder1 = new StringBuilder();
+		sBuilder2.append(o2.getValue("STADD")).append(o2.getValue("CITY"));
+		sBuilder1.append(o1.getValue("STADD")).append(o1.getValue("CITY"));
+		return (sBuilder2.toString().compareTo(sBuilder1.toString()));
+	}
+}
