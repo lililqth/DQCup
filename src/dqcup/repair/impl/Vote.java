@@ -42,7 +42,7 @@ public class Vote {
 				// 投票
 				for (int i = 0; i < 9; i++) {
 					HashMap<String, ArrayList<String>> map = record.valueMap[i];
-					if (map.size() > 1 && record.maxLength[i] > 1) {
+					if (map.size() > 1 && record.maxLength[i] >= 1) {
 
 						Iterator iter = map.entrySet().iterator();
 						while (iter.hasNext()) {

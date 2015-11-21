@@ -47,7 +47,7 @@ public class FD1 {
 				addRecord(current, record);
 				// 投票
 				HashMap<String, ArrayList<String>> map = record.valueMap;
-				if (map.size() > 1 && record.maxLength > 1) {
+				if (map.size() > 1 && record.maxLength >= 1) {
 					Iterator iter = map.entrySet().iterator();
 					while (iter.hasNext()) {
 						Map.Entry entry = (Map.Entry) iter.next();

@@ -33,9 +33,8 @@ public class FD {
 
 			StringBuilder sBuilder2 = new StringBuilder();
 			StringBuilder sBuilder1 = new StringBuilder();
-			sBuilder2.append(current.getValue("FNAME")).append(current.getValue("MINIT"))
-					.append(current.getValue("LNAME"));
-			sBuilder1.append(next.getValue("FNAME")).append(next.getValue("MINIT")).append(next.getValue("LNAME"));
+			sBuilder2.append(current.getValue("FNAME")).append(current.getValue("LNAME"));
+			sBuilder1.append(next.getValue("FNAME")).append(next.getValue("LNAME"));
 			boolean equal = sBuilder1.toString().equals(sBuilder2.toString());
 
 			if (equal) {
@@ -47,7 +46,7 @@ public class FD {
 				addRecord(current, record);
 				// 投票
 				HashMap<String, ArrayList<String>> map = record.valueMap;
-				if (map.size() > 1 && record.maxLength > 1) {
+				if (map.size() > 1 && record.maxLength >= 1) {
 					Iterator iter = map.entrySet().iterator();
 					while (iter.hasNext()) {
 						Map.Entry entry = (Map.Entry) iter.next();
@@ -110,8 +109,8 @@ class TupleCompare implements Comparator<Tuple> {
 	public int compare(Tuple o1, Tuple o2) {
 		StringBuilder sBuilder2 = new StringBuilder();
 		StringBuilder sBuilder1 = new StringBuilder();
-		sBuilder2.append(o2.getValue("FNAME")).append(o2.getValue("MINIT")).append(o2.getValue("LNAME"));
-		sBuilder1.append(o1.getValue("FNAME")).append(o1.getValue("MINIT")).append(o1.getValue("LNAME"));
+		sBuilder2.append(o2.getValue("FNAME")).append(o2.getValue("LNAME"));
+		sBuilder1.append(o1.getValue("FNAME")).append(o1.getValue("LNAME"));
 		return (sBuilder2.toString().compareTo(sBuilder1.toString()));
 	}
 }

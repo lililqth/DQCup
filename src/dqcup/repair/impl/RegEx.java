@@ -136,6 +136,15 @@ public class RegEx {
 				// tuple.getValue("CITY")));
 				tuple.getCells().put("CITY", "null");
 			}
+			
+			pattern = Pattern.compile("[A-Z][A-Z]");
+			isNum = pattern.matcher(tuple.getValue("STATE"));
+			if (!isNum.matches()) {
+				// result.add(new
+				// RepairedCell(Integer.valueOf(tuple.getValue(0)), "CITY",
+				// tuple.getValue("CITY")));
+				result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "STATE", tuple.getValue("STATE").toUpperCase()));
+			}
 		}
 		return result;
 	}
