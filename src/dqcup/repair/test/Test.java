@@ -23,7 +23,7 @@ public class Test {
 		if (truth.size() != 0) {
 			startTime = System.currentTimeMillis();
 			found = dr.repair("input/DB-easy.txt");
-			TestUtil.findDifferent(truth, found);
+//			TestUtil.findDifferent(truth, found);
 //			TestUtil.findWrong(truth, found);
 			
 			endTime = System.currentTimeMillis();
