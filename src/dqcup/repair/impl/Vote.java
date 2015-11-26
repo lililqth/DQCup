@@ -40,7 +40,7 @@ public class Vote {
 			} else if (record != null) {
 				addRecord(current, record);
 				// 投票
-				for (int i = 0; i < 9; i++) {
+				for (int i = 0; i < 10; i++) {
 					HashMap<String, ArrayList<String>> map = record.valueMap[i];
 					if (map.size() > 1 && record.maxLength[i] >= 1) {
 
@@ -75,7 +75,7 @@ public class Vote {
 	// 在 Record 记录表中添加一条记录
 	private void addRecord(Tuple current, Record record) {
 		// 建立value->RUID_List对，对每一个tuple的10个属性进行处理 不处理zipcode
-		for (int i = 2; i < 11; i++) {
+		for (int i = 2; i < 12; i++) {
 			String value = current.getValue(this.itemNameList[i]);
 			// 如果value在key中已经存在了， 就直接把RUID加入对应的list
 			if (record.valueMap[i - 2].containsKey(value)) {
@@ -105,7 +105,7 @@ class Record {
 	public String[] maxKey;// 每一个字段最高票数对应的key
 
 	public Record() {
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 10; i++) {
 			valueMap[i] = new HashMap<String, ArrayList<String>>();
 		}
 		maxLength = new int[10];

@@ -68,7 +68,7 @@ public class TestUtil {
 			HashMap<Integer, HashSet<String>> foundMap = new HashMap<Integer, HashSet<String>>();
 
 			for (RepairedCell cell : found) {
-				//System.out.println(cell);
+				// System.out.println(cell);
 				HashSet<String> columnIds = null;
 				if (foundMap.get(cell.getRowId()) == null) {
 					columnIds = new HashSet<String>();
@@ -79,14 +79,41 @@ public class TestUtil {
 				foundMap.put(cell.getRowId(), columnIds);
 			}
 			for (RepairedCell cell : truth) {
-				if (foundMap.get(cell.getRowId()) == null||
-						(foundMap.get(cell.getRowId()) != null && 
-						(!foundMap.get(cell.getRowId()).contains(cell.getColumnId())))
-						) {
-						System.out.println(cell);
+				if (foundMap.get(cell.getRowId()) == null || (foundMap.get(cell.getRowId()) != null
+						&& (!foundMap.get(cell.getRowId()).contains(cell.getColumnId())))) {
+					System.out.println(cell);
 				}
 			}
 		}
+	}
+
+	public static void findWrong(Set<RepairedCell> truth, Set<RepairedCell> found) {
+		if (found.size() != 0) {
+			HashMap<Integer, HashSet<String>> foundMap = new HashMap<Integer, HashSet<String>>();
+
+			for (RepairedCell cell : truth) {
+				// System.out.println(cell);
+				HashSet<String> columnIds = null;
+				if (foundMap.get(cell.getRowId()) == null) {
+					columnIds = new HashSet<String>();
+				} else {
+					columnIds = foundMap.get(cell.getRowId());
+				}
+				columnIds.add(cell.getColumnId());
+				foundMap.put(cell.getRowId(), columnIds);
+			}
+			for (RepairedCell cell : found) {
+				// System.out.println(cell);
+				if (foundMap.get(cell.getRowId()) != null) {
+					if (foundMap.get(cell.getRowId()).contains(cell.getColumnId())) {
+						foundMap.get(cell.getRowId()).remove(cell.getColumnId());
+					}
+				} else {
+					System.out.println(cell);
+				}
+			}
+		}
+
 	}
 
 	public static double findAccuracy(Set<RepairedCell> truth, Set<RepairedCell> found) {
@@ -94,6 +121,7 @@ public class TestUtil {
 			HashMap<Integer, HashSet<String>> foundMap = new HashMap<Integer, HashSet<String>>();
 
 			for (RepairedCell cell : found) {
+				// System.out.println(cell);
 				HashSet<String> columnIds = null;
 				if (foundMap.get(cell.getRowId()) == null) {
 					columnIds = new HashSet<String>();

@@ -107,6 +107,7 @@ public class RegEx {
 				} else {
 					pattern = Pattern.compile("[0-9][a-z][0-9]");
 					String str = tuple.getValue("APMT");
+					
 					isNum = pattern.matcher(str);
 					if (!isNum.matches()) {
 						if (str.length() == 3) {
@@ -114,10 +115,10 @@ public class RegEx {
 							String m = str.substring(1, 2);
 							String l = str.substring(2, 3);
 							if (f.charAt(0) >= 'a' && f.charAt(0) <= 'z')
-								str = m + l + f;
+								str = m + f+ l;
 							if (l.charAt(0) >= 'a' && l.charAt(0) <= 'z')
-								str = f + l + m;
-							result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "APMT", str));
+								str = f + l+ m;
+							result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "APMT", str.toLowerCase()));
 						} else
 							tuple.getCells().put("APMT", "null");
 						// result.add(new
