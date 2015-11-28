@@ -20,7 +20,7 @@ public class Test {
 
 		DatabaseRepair dr = new DatabaseRepairImpl();
 		truth = TestUtil.readTruth("input/Truth-easy.txt");
-		if (truth.size() != 0) {
+		 if (truth.size() != 0) {
 			startTime = System.currentTimeMillis();
 			found = dr.repair("input/DB-easy.txt");
 //			TestUtil.findDifferent(truth, found);

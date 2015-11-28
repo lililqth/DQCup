@@ -1,5 +1,7 @@
 package dqcup.repair.impl;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -14,16 +16,63 @@ public class PreProcess {
 		Iterator<Tuple> iterator = tuples.iterator();
 		Tuple current = iterator.next();
 		Tuple next = iterator.next();
-		LinkedList<Tuple> newTuple = new LinkedList<Tuple>(); 
+		LinkedList<Tuple> newTuple = new LinkedList<Tuple>();
+		String curCUID = "", nextCUID = "";
 		while (iterator.hasNext()) {
 			current = next;
 			next = iterator.next();
-			String curCUID = current.getValue("CUID");
-			String nextCUID = next.getValue("CUID");
+			if (next == null){
+				
+			}
+			curCUID = current.getValue("CUID");
+			nextCUID = next.getValue("CUID");
 			if (!curCUID.equals(nextCUID)){
 				newTuple.add(current);
 			}
 		}
+		if (!curCUID.equals(nextCUID)){
+			newTuple.add(next);
+		}
+		/*
+		int lineNum = 0;
+		PrintStream ps;
+		try {
+			ps = new PrintStream("/Users/qiji/Desktop/easy.txt");
+			System.setOut(ps);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+		  
+		System.out.println("RUID:CUID:SSN:FNAME:MINIT:LNAME:STNUM:STADD:APMT:CITY:STATE:ZIP");
+		for(iterator = newTuple.iterator();iterator.hasNext();){
+			current = iterator.next();
+			StringBuilder sBuilder = new StringBuilder();
+			sBuilder.append(lineNum++);
+			sBuilder.append(":");
+			sBuilder.append(current.getValue("CUID"));
+			sBuilder.append(":");
+			sBuilder.append(current.getValue("SSN"));
+			sBuilder.append(":");
+			sBuilder.append(current.getValue("FNAME"));
+			sBuilder.append(":");
+			sBuilder.append(current.getValue("MINIT"));
+			sBuilder.append(":");
+			sBuilder.append(current.getValue("LNAME"));
+			sBuilder.append(":");
+			sBuilder.append(current.getValue("STNUM"));
+			sBuilder.append(":");
+			sBuilder.append(current.getValue("STADD"));
+			sBuilder.append(":");
+			sBuilder.append(current.getValue("APMT"));
+			sBuilder.append(":");
+			sBuilder.append(current.getValue("CITY"));
+			sBuilder.append(":");
+			sBuilder.append(current.getValue("STATE"));
+			sBuilder.append(":");
+			sBuilder.append(current.getValue("ZIP"));
+			System.out.println(sBuilder.toString());
+		}*/
 		return newTuple;
 	}
 }

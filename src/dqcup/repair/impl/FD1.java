@@ -43,6 +43,9 @@ public class FD1 {
 					record = new RecordXY();
 				}
 				addRecord(current, record);
+				if (!iterator.hasNext()){
+					addRecord(next, record);
+				}
 			} else if (record != null) {
 				addRecord(current, record);
 				// 投票
