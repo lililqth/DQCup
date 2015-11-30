@@ -39,10 +39,11 @@ public class Test {
 		}
 		
 		/*test normal*/
-//		startTime = System.currentTimeMillis();
-//		found = dr.repair("input/DB-normal.txt");
-//		endTime = System.currentTimeMillis();
-//		System.out.println("normal-Time:" + (endTime - startTime));
+		startTime = System.currentTimeMillis();
+		found = dr.repair("input/DB-normal.txt");
+		System.out.println(found);
+		endTime = System.currentTimeMillis();
+		System.out.println("normal-Time:" + (endTime - startTime));
 		/***************************************/
 		
 		dr = new DatabaseRepairImpl();
@@ -50,6 +51,7 @@ public class Test {
 		if (truth.size() != 0) {
 			startTime = System.currentTimeMillis();
 			found = dr.repair("input/DB-normal.txt");
+			
 			endTime = System.currentTimeMillis();
 
 			double findAccuracy = TestUtil.findAccuracy(truth, found);

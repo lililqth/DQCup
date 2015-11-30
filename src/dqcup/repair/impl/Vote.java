@@ -25,8 +25,8 @@ public class Vote {
 		String currentCUID = "";
 		Record record = null;
 		Iterator<Tuple> iterator = tuples.iterator();
-		Tuple current =  iterator.next();
-		
+		Tuple current = iterator.next();
+
 		Tuple next = iterator.next();
 		while (iterator.hasNext()) {
 			current = next;
@@ -37,7 +37,7 @@ public class Vote {
 					record = new Record();
 				}
 				addRecord(current, record);
-				if (!iterator.hasNext()){
+				if (!iterator.hasNext()) {
 					addRecord(next, record);
 				}
 			} else if (record != null) {
@@ -56,10 +56,7 @@ public class Vote {
 								for (String str : val) {
 									int RUID = Integer.parseInt(str);
 									String name = this.itemNameList[i + 2];
-									// RepairedCell cell = new
-									// RepairedCell(RUID, name,
-									// record.maxKey[i]);
-									// result.add(cell);
+									
 									result.add(new RepairedCell(RUID, name, record.maxKey[i]));
 								}
 							}

@@ -18,6 +18,7 @@ class HyperEdge{
 class Point{
 	public String x, y;
 }
+
 public class FDRepair {
 	public LinkedList<Tuple> tuples;
 	

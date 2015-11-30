@@ -48,6 +48,7 @@ public class RegEx {
 				if (c >= 'a' && c <= 'z') {
 					temp = temp.replaceFirst(temp.substring(0, 1), temp.substring(0, 1).toUpperCase());
 					result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "FNAME", temp));
+					tuple.getCells().put("FNAME", temp);
 				} else {
 					tuple.getCells().put("FNAME", "null");
 					
@@ -65,6 +66,7 @@ public class RegEx {
 				if (c >= 'a' && c <= 'z') {
 					temp = temp.replaceFirst(temp.substring(0, 1), temp.substring(0, 1).toUpperCase());
 					result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "LNAME", temp));
+					tuple.getCells().put("LNAME", temp);
 				} else
 					tuple.getCells().put("LNAME", "null");
 				// result.add(new
@@ -81,6 +83,7 @@ public class RegEx {
 				if (c >= 'a' && c <= 'z') {
 					temp = temp.substring(0, 1).toUpperCase();
 					result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "MINIT", temp));
+					tuple.getCells().put("MINIT", temp);
 				} else
 					tuple.getCells().put("MINIT", "null");
 				// result.add(new
@@ -96,8 +99,10 @@ public class RegEx {
 			if (isNum.matches()) {
 				if (tuple.getValue("STNUM").length() > 0)
 					result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "STNUM", ""));
+					tuple.getCells().put("STNUM", "");
 				if (tuple.getValue("APMT").length() > 0)
 					result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "APMT", ""));
+					tuple.getCells().put("APMT", "");
 			} else {
 				pattern = Pattern.compile("[A-Za-z\\s\\,\\.]+");
 				isNum = pattern.matcher(tuple.getValue("STADD"));
@@ -119,6 +124,7 @@ public class RegEx {
 							if (l.charAt(0) >= 'a' && l.charAt(0) <= 'z')
 								str = f + l+ m;
 							result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "APMT", str.toLowerCase()));
+							tuple.getCells().put("APMT", str.toLowerCase());
 						} else
 							tuple.getCells().put("APMT", "null");
 						// result.add(new
@@ -145,6 +151,7 @@ public class RegEx {
 				// RepairedCell(Integer.valueOf(tuple.getValue(0)), "CITY",
 				// tuple.getValue("CITY")));
 				result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "STATE", tuple.getValue("STATE").toUpperCase()));
+				tuple.getCells().put("STATE", tuple.getValue("STATE").toUpperCase());
 			}
 		}
 		return result;
