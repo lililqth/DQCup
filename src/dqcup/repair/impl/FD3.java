@@ -13,99 +13,110 @@ import dqcup.repair.RepairedCell;
 import dqcup.repair.Tuple;
 
 public class FD3 {
-	public LinkedList<Tuple> tuples;
+    public LinkedList<Tuple> tuples;
 
-	public FD3(LinkedList<Tuple> tup) {
-		this.tuples = tup;
-	}
+    
+    public FD3(LinkedList<Tuple> tup) {
+        this.tuples = tup;
+    }
 
-	public HashSet<RepairedCell> repair() {
-		Collections.sort(tuples, new TupleCompare_FNAME_STNUM()); // 排序
+    public HashSet<RepairedCell> repair() {
+        Collections.sort(tuples, new TupleCompare_FNAME_STNUM()); // 排序
 
-		HashSet<RepairedCell> result = new HashSet<RepairedCell>();
-		RecordXY record = null;
-		Iterator<Tuple> iterator = tuples.iterator();
-		Tuple current = iterator.next();
-		Tuple next = iterator.next();
-		while (iterator.hasNext()) {
-			current = next;
-			next = iterator.next();
+        HashSet<RepairedCell> result = new HashSet<RepairedCell>();
+        RecordXY record = null;
+        Iterator<Tuple> iterator = tuples.iterator();
+        Tuple current = null;
+        Tuple next = iterator.next();
+        while (iterator.hasNext()) {
+            current = next;
+            next = iterator.next();
 
-			StringBuilder sBuilder2 = new StringBuilder();
-			StringBuilder sBuilder1 = new StringBuilder();
-			sBuilder2.append(current.getValue("FNAME")).append(current.getValue("STNUM"));
-					
-			sBuilder1.append(next.getValue("FNAME")).append(next.getValue("STNUM"));
-			boolean equal = sBuilder1.toString().equals(sBuilder2.toString());
+            StringBuilder sBuilder2 = new StringBuilder();
+            StringBuilder sBuilder1 = new StringBuilder();
+            sBuilder2.append(current.getValue("FNAME")).append(current.getValue("STNUM"));
+            sBuilder1.append(next.getValue("FNAME")).append(next.getValue("STNUM"));
+            boolean equal = sBuilder1.toString().equals(sBuilder2.toString());
 
-			if (equal) {
-				if (record == null) {
-					record = new RecordXY();
-				}
-				addRecord(current, record);
-				if (!iterator.hasNext()){
-					addRecord(next, record);
-				}
-			} else if (record != null) {
-				addRecord(current, record);
-				// 投票
-				HashMap<String, ArrayList<String>> map = record.valueMap;
-				if (map.size() > 1 && record.maxLength >= 1) {
-					Iterator iter = map.entrySet().iterator();
-					while (iter.hasNext()) {
-						Map.Entry entry = (Map.Entry) iter.next();
-						ArrayList<String> val = (ArrayList<String>) entry.getValue();
-						String key = (String) entry.getKey();
-						if (val.size() < record.maxLength || key.equals("null")) {
-							for (String str : val) {
-								int RUID = Integer.parseInt(str);
-								result.add(new RepairedCell(RUID, "APMT", record.maxKey));
-							}
-						}
-					}
+            if (equal) {
+                if (record == null) {
+                    record = new RecordXY();
+                }
+                addRecord(current, record);
+                if (!iterator.hasNext()){
+                    addRecord(next, record);
+                }
+            } else if (record != null) {
+                addRecord(current, record);
+                // 投票
+                HashMap<String, ArrayList<String>> map = record.valueMap;
+                if (map.size() > 1 && record.maxLength >= 1) {
+                    Iterator iter = map.entrySet().iterator();
+                    while (iter.hasNext()) {
+                        Map.Entry entry = (Map.Entry) iter.next();
+                        ArrayList<String> val = (ArrayList<String>) entry.getValue();
+                        String key = (String) entry.getKey();
+                        if (val.size() < record.maxLength || key.equals("null")) {
+                            for (String str : val) {
+                                int RUID = Integer.parseInt(str);
 
-				}
-				// 刷新
-				record = null;
-			} else {
-				continue;
-			}
-		}
-		return result;
-	}
+                                //将这个人的最后一条记录修改过来
+                                Tuple personLastRecord = record.tupleMap.get(str);
+                                personLastRecord.set("ZIP", record.maxKey);
 
-	private void addRecord(Tuple current, RecordXY record) {
-		// 建立value->RUID_List对
-		String value = current.getValue("APMT");
-		// 如果value在key中已经存在了， 就直接把RUID加入对应的list
-		if (record.valueMap.containsKey(value)) {
-			ArrayList<String> list = record.valueMap.get(value);
-			list.add(current.getValue("RUID"));
-			if ((!value.equals("null")) && list.size() > record.maxLength) {
-				record.maxLength = list.size();
-				record.maxKey = value;
-			}
-		} else {
-			ArrayList<String> list = new ArrayList<String>();
-			list.add(current.getValue("RUID"));
-			// 将<value, list>对存放到对应的map中
-			record.valueMap.put(value, list);
-			if ((!value.equals("null")) && record.maxLength == 0) {
-				record.maxLength = 1;
-				record.maxKey = value;
-			}
-		}
-	}
+                                // 将这个人的每一条记录全部修改过来
+                                for (int i=0; i<= personLastRecord.number; i++){
+                                    result.add(new RepairedCell(RUID-i, "APMT", record.maxKey));
+                                }
+
+                            }
+                        }
+                    }
+                }
+                // 刷新
+                record = null;
+            } else {
+                continue;
+            }
+        }
+        return result;
+    }
+
+    private void addRecord(Tuple current, RecordXY record) {
+        // 建立value->RUID_List对
+        String value = current.getValue("APMT");
+        // 如果value在key中已经存在了， 就直接把RUID加入对应的list
+        String RUID = current.getValue("RUID");
+        record.tupleMap.put(RUID, current);
+        if (record.valueMap.containsKey(value)) {
+            ArrayList<String> list = record.valueMap.get(value);
+            list.add(RUID);
+            if ((!value.equals("null")) && list.size() > record.maxLength) {
+                record.maxLength = list.size();
+                record.maxKey = value;
+            }
+        } else {
+            ArrayList<String> list = new ArrayList<String>();
+            list.add(RUID);
+            // 将<value, list>对存放到对应的map中
+            record.valueMap.put(value, list);
+            if ((!value.equals("null")) && record.maxLength == 0) {
+                record.maxLength = 1;
+                record.maxKey = value;
+            }
+        }
+    }
 }
 
 
+
 class TupleCompare_FNAME_STNUM implements Comparator<Tuple> {
-	@Override
-	public int compare(Tuple o1, Tuple o2) {
-		StringBuilder sBuilder2 = new StringBuilder();
-		StringBuilder sBuilder1 = new StringBuilder();
-		sBuilder2.append(o2.getValue("FNAME")).append(o2.getValue("STNUM"));
-		sBuilder1.append(o1.getValue("FNAME")).append(o1.getValue("STNUM"));
-		return (sBuilder2.toString().compareTo(sBuilder1.toString()));
-	}
+    @Override
+    public int compare(Tuple o1, Tuple o2) {
+        StringBuilder sBuilder2 = new StringBuilder();
+        StringBuilder sBuilder1 = new StringBuilder();
+        sBuilder2.append(o2.getValue("FNAME")).append(o2.getValue("STNUM"));
+        sBuilder1.append(o1.getValue("FNAME")).append(o1.getValue("STNUM"));
+        return (sBuilder2.toString().compareTo(sBuilder1.toString()));
+    }
 }

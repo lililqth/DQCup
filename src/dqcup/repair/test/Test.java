@@ -25,7 +25,7 @@ public class Test {
 			found = dr.repair("input/DB-easy.txt");
 //			TestUtil.findDifferent(truth, found);
 //			TestUtil.findWrong(truth, found);
-			
+//			System.out.println(found);
 			endTime = System.currentTimeMillis();
 
 			double findAccuracy = TestUtil.findAccuracy(truth, found);
@@ -37,13 +37,13 @@ public class Test {
 			avgFindAccuracy += findAccuracy;
 			avgRepairAccuracy += repairAccuracy;
 		}
-		
+
 		/*test normal*/
-		startTime = System.currentTimeMillis();
-		found = dr.repair("input/DB-normal.txt");
-		System.out.println(found);
-		endTime = System.currentTimeMillis();
-		System.out.println("normal-Time:" + (endTime - startTime));
+//		startTime = System.currentTimeMillis();
+//		found = dr.repair("input/DB-normal.txt");
+////		System.out.println(found);
+//		endTime = System.currentTimeMillis();
+//		System.out.println("normal-Time:" + (endTime - startTime));
 		/***************************************/
 		
 		dr = new DatabaseRepairImpl();

@@ -25,7 +25,7 @@ public class FD {
 		HashSet<RepairedCell> result = new HashSet<RepairedCell>();
 		RecordXY record = null;
 		Iterator<Tuple> iterator = tuples.iterator();
-		Tuple current = iterator.next();
+		Tuple current = null;
 		Tuple next = iterator.next();
 		while (iterator.hasNext()) {
 			current = next;
@@ -48,6 +48,7 @@ public class FD {
 			} else if (record != null) {
 				addRecord(current, record);
 				// 投票
+				
 				HashMap<String, ArrayList<String>> map = record.valueMap;
 				if (map.size() > 1 && record.maxLength >= 1) {
 					Iterator iter = map.entrySet().iterator();
@@ -55,14 +56,22 @@ public class FD {
 						Map.Entry entry = (Map.Entry) iter.next();
 						ArrayList<String> val = (ArrayList<String>) entry.getValue();
 						String key = (String) entry.getKey();
+						
 						if (val.size() < record.maxLength || key.equals("null")) {
 							for (String str : val) {
 								int RUID = Integer.parseInt(str);
-								result.add(new RepairedCell(RUID, "ZIP", record.maxKey));
+								
+								//将这个人的最后一条记录修改过来
+								Tuple personLastRecord = record.tupleMap.get(str);
+								personLastRecord.set("ZIP", record.maxKey);
+								// 将这个人的每一条记录全部修改过来
+								for (int i=0; i<= personLastRecord.number; i++){
+									result.add(new RepairedCell(RUID-i, "ZIP", record.maxKey));
+								}
+								
 							}
 						}
 					}
-
 				}
 				// 刷新
 				record = null;
@@ -77,16 +86,19 @@ public class FD {
 		// 建立value->RUID_List对
 		String value = current.getValue("ZIP");
 		// 如果value在key中已经存在了， 就直接把RUID加入对应的list
+		String RUID = current.getValue("RUID");
 		if (record.valueMap.containsKey(value)) {
 			ArrayList<String> list = record.valueMap.get(value);
-			list.add(current.getValue("RUID"));
+			list.add(RUID);
+			record.tupleMap.put(RUID, current);
 			if ((!value.equals("null")) && list.size() > record.maxLength) {
 				record.maxLength = list.size();
 				record.maxKey = value;
 			}
 		} else {
 			ArrayList<String> list = new ArrayList<String>();
-			list.add(current.getValue("RUID"));
+			list.add(RUID);
+			record.tupleMap.put(RUID, current);
 			// 将<value, list>对存放到对应的map中
 			record.valueMap.put(value, list);
 			if ((!value.equals("null")) && record.maxLength == 0) {
@@ -99,6 +111,7 @@ public class FD {
 
 class RecordXY {
 	public HashMap<String, ArrayList<String>> valueMap = new HashMap<String, ArrayList<String>>();
+	public HashMap<String, Tuple> tupleMap = new HashMap<String, Tuple>();
 	public int maxLength; // 字段的最高票数
 	public String maxKey;// 字段最高票数对应的key
 

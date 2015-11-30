@@ -1,6 +1,5 @@
 package dqcup.repair.impl;
 
-import java.io.FileNotFoundException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -22,10 +21,11 @@ public class DatabaseRepairImpl implements DatabaseRepair {
 		// 正则表达式
 		RegEx reg = new RegEx(tuples);
 		result = reg.verify(result);
-
 		// 进行单人投票
 		Vote vote = new Vote(tuples);
 		result.addAll(vote.repair());
+		
+		// 预处理删除冗余的数据
 		PreProcess PP = new PreProcess(tuples);
 		tuples = PP.Process();
 		

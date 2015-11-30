@@ -12,7 +12,6 @@ import dqcup.repair.Tuple;
 
 public class Vote {
 	public LinkedList<Tuple> tuples;
-	private HashSet<Record> CUIDSet = new HashSet<Record>();
 	private String[] itemNameList = { "RUID", "CUID", "SSN", "FNAME", "MINIT", "LNAME", "STNUM", "STADD", "APMT",
 			"CITY", "STATE", "ZIP" };
 
@@ -22,10 +21,9 @@ public class Vote {
 
 	public HashSet<RepairedCell> repair() {
 		HashSet<RepairedCell> result = new HashSet<RepairedCell>();
-		String currentCUID = "";
 		Record record = null;
 		Iterator<Tuple> iterator = tuples.iterator();
-		Tuple current = iterator.next();
+		Tuple current = null;
 
 		Tuple next = iterator.next();
 		while (iterator.hasNext()) {
@@ -56,7 +54,7 @@ public class Vote {
 								for (String str : val) {
 									int RUID = Integer.parseInt(str);
 									String name = this.itemNameList[i + 2];
-									
+									current.set(name, record.maxKey[i]);
 									result.add(new RepairedCell(RUID, name, record.maxKey[i]));
 								}
 							}
@@ -74,7 +72,7 @@ public class Vote {
 
 	// 在 Record 记录表中添加一条记录
 	private void addRecord(Tuple current, Record record) {
-		// 建立value->RUID_List对，对每一个tuple的10个属性进行处理 不处理zipcode
+		// 建立value->RUID_List对，对每一个tuple的10个属性进行处理
 		for (int i = 2; i < 12; i++) {
 			String value = current.getValue(this.itemNameList[i]);
 			// 如果value在key中已经存在了， 就直接把RUID加入对应的list

@@ -23,7 +23,7 @@ public class RegEx {
 			Pattern pattern = Pattern.compile("[0-9]{5}");
 			Matcher isNum = pattern.matcher(tuple.getValue("ZIP"));
 			if (!isNum.matches()) {
-				tuple.getCells().put("ZIP", "null");
+				tuple.set("ZIP", "null");
 				// result.add(new
 				// RepairedCell(Integer.valueOf(tuple.getValue(0)), "ZIP",
 				// tuple.getValue("ZIP")));
@@ -33,7 +33,7 @@ public class RegEx {
 			pattern = Pattern.compile("[0-9]{9}");
 			isNum = pattern.matcher(tuple.getValue("SSN"));
 			if (!isNum.matches()) {
-				tuple.getCells().put("SSN", "null");
+				tuple.set("SSN", "null");
 				// result.add(new
 				// RepairedCell(Integer.valueOf(tuple.getValue(0)), "SSN",
 				// tuple.getValue("SSN")));
@@ -48,9 +48,9 @@ public class RegEx {
 				if (c >= 'a' && c <= 'z') {
 					temp = temp.replaceFirst(temp.substring(0, 1), temp.substring(0, 1).toUpperCase());
 					result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "FNAME", temp));
-					tuple.getCells().put("FNAME", temp);
+					tuple.set("FNAME", temp);
 				} else {
-					tuple.getCells().put("FNAME", "null");
+					tuple.set("FNAME", "null");
 					
 				}
 				// result.add(new
@@ -66,9 +66,9 @@ public class RegEx {
 				if (c >= 'a' && c <= 'z') {
 					temp = temp.replaceFirst(temp.substring(0, 1), temp.substring(0, 1).toUpperCase());
 					result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "LNAME", temp));
-					tuple.getCells().put("LNAME", temp);
+					tuple.set("LNAME", temp);
 				} else
-					tuple.getCells().put("LNAME", "null");
+					tuple.set("LNAME", "null");
 				// result.add(new
 				// RepairedCell(Integer.valueOf(tuple.getValue(0)), "LNAME",
 				// temp));
@@ -83,9 +83,9 @@ public class RegEx {
 				if (c >= 'a' && c <= 'z') {
 					temp = temp.substring(0, 1).toUpperCase();
 					result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "MINIT", temp));
-					tuple.getCells().put("MINIT", temp);
+					tuple.set("MINIT", temp);
 				} else
-					tuple.getCells().put("MINIT", "null");
+					tuple.set("MINIT", "null");
 				// result.add(new
 				// RepairedCell(Integer.valueOf(tuple.getValue(0)), "MINIT",
 				// temp));
@@ -96,42 +96,49 @@ public class RegEx {
 			// Box xxxx”,则STNUM和APMT属性皆为空
 			pattern = Pattern.compile("PO Box [0-9]{1,4}");
 			isNum = pattern.matcher(tuple.getValue("STADD"));
+			if (tuple.getValue("STNUM").length() == 0&&tuple.getValue("APMT").length() == 0&&!isNum.matches())
+			{
+				tuple.set("STADD", "null");
+			}
+			isNum = pattern.matcher(tuple.getValue("STADD"));
 			if (isNum.matches()) {
-				if (tuple.getValue("STNUM").length() > 0)
+				if (tuple.getValue("STNUM").length() > 0){
 					result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "STNUM", ""));
-					tuple.getCells().put("STNUM", "");
-				if (tuple.getValue("APMT").length() > 0)
+					tuple.set("STNUM", "");
+				}
+				if (tuple.getValue("APMT").length() > 0){
 					result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "APMT", ""));
-					tuple.getCells().put("APMT", "");
-			} else {
+					tuple.set("APMT", "");
+				}
+			} else if(!isNum.matches()&&tuple.getValue("STADD")!="null") {
 				pattern = Pattern.compile("[A-Za-z\\s\\,\\.]+");
 				isNum = pattern.matcher(tuple.getValue("STADD"));
 				if (!isNum.matches()) {
-					tuple.getCells().put("STADD", "null");
+					tuple.set("STADD", "null");
 					// isNum=pattern.matcher(tuple.getValue("STADD"));
-				} else {
-					pattern = Pattern.compile("[0-9][a-z][0-9]");
-					String str = tuple.getValue("APMT");
-					
-					isNum = pattern.matcher(str);
-					if (!isNum.matches()) {
-						if (str.length() == 3) {
-							String f = str.substring(0, 1);
-							String m = str.substring(1, 2);
-							String l = str.substring(2, 3);
-							if (f.charAt(0) >= 'a' && f.charAt(0) <= 'z')
-								str = m + f+ l;
-							if (l.charAt(0) >= 'a' && l.charAt(0) <= 'z')
-								str = f + l+ m;
-							result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "APMT", str.toLowerCase()));
-							tuple.getCells().put("APMT", str.toLowerCase());
-						} else
-							tuple.getCells().put("APMT", "null");
-						// result.add(new
-						// RepairedCell(Integer.valueOf(tuple.getValue(0)),
-						// "APMT", str));
-					}
+				} 
+				pattern = Pattern.compile("[0-9][a-z][0-9]");
+				String str = tuple.getValue("APMT");
+				
+				isNum = pattern.matcher(str);
+				if (!isNum.matches()) {
+					if (str.length() == 3) {
+						String f = str.substring(0, 1);
+						String m = str.substring(1, 2);
+						String l = str.substring(2, 3);
+						if (f.charAt(0) >= 'a' && f.charAt(0) <= 'z')
+							str = m + f+ l;
+						if (l.charAt(0) >= 'a' && l.charAt(0) <= 'z')
+							str = f + l+ m;
+						result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "APMT", str.toLowerCase()));
+						tuple.set("APMT", str.toLowerCase());
+					} else
+						tuple.set("APMT", "null");
+					// result.add(new
+					// RepairedCell(Integer.valueOf(tuple.getValue(0)),
+					// "APMT", str));
 				}
+				
 			}
 
 			// CITY:城市名,可能包含字母+五种标点符号'-/. (空格也算一种)
@@ -141,7 +148,7 @@ public class RegEx {
 				// result.add(new
 				// RepairedCell(Integer.valueOf(tuple.getValue(0)), "CITY",
 				// tuple.getValue("CITY")));
-				tuple.getCells().put("CITY", "null");
+				tuple.set("CITY", "null");
 			}
 			
 			pattern = Pattern.compile("[A-Z][A-Z]");
@@ -151,7 +158,7 @@ public class RegEx {
 				// RepairedCell(Integer.valueOf(tuple.getValue(0)), "CITY",
 				// tuple.getValue("CITY")));
 				result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "STATE", tuple.getValue("STATE").toUpperCase()));
-				tuple.getCells().put("STATE", tuple.getValue("STATE").toUpperCase());
+				tuple.set("STATE", tuple.getValue("STATE").toUpperCase());
 			}
 		}
 		return result;

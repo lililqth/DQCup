@@ -14,27 +14,26 @@ public class PreProcess {
 	}
 	public LinkedList<Tuple> Process(){
 		Iterator<Tuple> iterator = tuples.iterator();
-		Tuple current = iterator.next();
+		Tuple current = null;
+	
 		Tuple next = iterator.next();
 		LinkedList<Tuple> newTuple = new LinkedList<Tuple>();
 		String curCUID = "", nextCUID = "";
 		while (iterator.hasNext()) {
 			current = next;
 			next = iterator.next();
-			if (next == null){
-				
-			}
 			curCUID = current.getValue("CUID");
 			nextCUID = next.getValue("CUID");
-			if (!curCUID.equals(nextCUID)){
+			// 记录同一个人有几条记录
+			if (curCUID.equals(nextCUID)){
+				next.number = current.number + 1;
+			}else{
 				newTuple.add(current);
 			}
 		}
-		if (!curCUID.equals(nextCUID)){
-			newTuple.add(next);
-		}
+		
+		newTuple.add(next);
 		/*
-		int lineNum = 0;
 		PrintStream ps;
 		try {
 			ps = new PrintStream("/Users/qiji/Desktop/easy.txt");
@@ -48,7 +47,7 @@ public class PreProcess {
 		for(iterator = newTuple.iterator();iterator.hasNext();){
 			current = iterator.next();
 			StringBuilder sBuilder = new StringBuilder();
-			sBuilder.append(lineNum++);
+			sBuilder.append(current.getValue("RUID"));
 			sBuilder.append(":");
 			sBuilder.append(current.getValue("CUID"));
 			sBuilder.append(":");
@@ -72,7 +71,8 @@ public class PreProcess {
 			sBuilder.append(":");
 			sBuilder.append(current.getValue("ZIP"));
 			System.out.println(sBuilder.toString());
-		}*/
+		}
+		*/
 		return newTuple;
 	}
 }
