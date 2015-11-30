@@ -54,8 +54,9 @@ public class Vote {
 								for (String str : val) {
 									int RUID = Integer.parseInt(str);
 									String name = this.itemNameList[i + 2];
-									current.set(name, record.maxKey[i]);
-									result.add(new RepairedCell(RUID, name, record.maxKey[i]));
+									if (current.set(name, record.maxKey[i])){
+										result.add(new RepairedCell(RUID, name, record.maxKey[i]));
+									}
 								}
 							}
 						}

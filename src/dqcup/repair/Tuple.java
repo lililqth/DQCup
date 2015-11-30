@@ -13,7 +13,7 @@ public class Tuple {
 		return cells;
 	}
 	
-	public void set(String key, String value){
+	public boolean set(String key, String value){
 		String RUID = this.getCells().get("RUID");
 		boolean judge = isModified.contains(RUID+key);
 		if (judge == false){
@@ -21,7 +21,9 @@ public class Tuple {
 			if (!value.equals("null")){
 				isModified.add(RUID+key);
 			}
+			return true;
 		}
+		return false;
 	}
 	
 	public void setCells(HashMap<String, String> cells) {

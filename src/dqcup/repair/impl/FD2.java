@@ -61,10 +61,12 @@ public class FD2 {
 
                                 //将这个人的最后一条记录修改过来
                                 Tuple personLastRecord = record.tupleMap.get(str);
-                                personLastRecord.set("ZIP", record.maxKey);
+                                if(personLastRecord.set("ZIP", record.maxKey)){
+                                	result.add(new RepairedCell(RUID, "STATE", record.maxKey));
+                                }
 
                                 // 将这个人的每一条记录全部修改过来
-                                for (int i=0; i<= personLastRecord.number; i++){
+                                for (int i=1; i<= personLastRecord.number; i++){
                                     result.add(new RepairedCell(RUID-i, "STATE", record.maxKey));
                                 }
 
