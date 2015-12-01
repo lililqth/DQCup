@@ -1,6 +1,11 @@
 package dqcup.repair.impl;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -37,11 +42,8 @@ public class DatabaseRepairImpl implements DatabaseRepair {
 		FD1 fd1 = new FD1(tuples);
 		result.addAll(fd1.repair());
 		
-		// stadd, city决定 stnum
-		FD4 fd4 = new FD4(tuples);
-		result.addAll(fd4.repair());
 
-		// APMT ZIP 决定 STATE 没有效果
+		// APMT ZIP 决定 STATE
 		FD2 fd2 = new FD2(tuples);
 		result.addAll(fd2.repair());
 
@@ -49,7 +51,7 @@ public class DatabaseRepairImpl implements DatabaseRepair {
 		FD3 fd3 = new FD3(tuples);
 		result.addAll(fd3.repair());
 		
-//		System.out.println(tuples);
+		
 		return result;
 	}
 }

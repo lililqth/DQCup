@@ -1,5 +1,7 @@
 package dqcup.repair.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
@@ -44,16 +46,16 @@ public class RegEx {
 			temp = tuple.getValue("FNAME");
 			isNum = pattern.matcher(temp);
 			if (!isNum.matches()) {
-				
+
 				char c = temp.charAt(0);
 				if (c >= 'a' && c <= 'z') {
 					temp = temp.replaceFirst(temp.substring(0, 1), temp.substring(0, 1).toUpperCase());
 					if(tuple.set("FNAME", temp)){
-						result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "FNAME", temp));	
+						result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "FNAME", temp));
 					}
 				} else {
 					tuple.set("FNAME", "null");
-					
+
 				}
 				// result.add(new
 				// RepairedCell(Integer.valueOf(tuple.getValue(0)), "FNAME",
@@ -68,7 +70,7 @@ public class RegEx {
 				if (c >= 'a' && c <= 'z') {
 					temp = temp.replaceFirst(temp.substring(0, 1), temp.substring(0, 1).toUpperCase());
 					if(tuple.set("LNAME", temp)){
-						result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "LNAME", temp));	
+						result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "LNAME", temp));
 					}
 				} else
 					tuple.set("LNAME", "null");
@@ -82,18 +84,24 @@ public class RegEx {
 			temp = tuple.getValue("MINIT");
 			isNum = pattern.matcher(temp);
 			if (!isNum.matches()) {
-				char c = temp.charAt(0);
-				if (c >= 'a' && c <= 'z') {
-					temp = temp.substring(0, 1).toUpperCase();
-					if (tuple.set("MINIT", temp)){
-						result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "MINIT", temp));	
+				for(int i=0;i<temp.length();i++)
+				{
+					char c = temp.charAt(i);
+					if (c >= 'a' && c <= 'z') {
+						String temp1 = temp.substring(i,i+1).toUpperCase();
+						if(tuple.set("MINIT", temp1)){
+							result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "MINIT", temp1));
+						}
+						break;
 					}
-				} else
-					tuple.set("MINIT", "null");
-				// result.add(new
-				// RepairedCell(Integer.valueOf(tuple.getValue(0)), "MINIT",
-				// temp));
-
+					else if (c >= 'A' && c <= 'Z') {
+						String temp1 = temp.substring(i,i+1);
+						if(tuple.set("MINIT", temp1)){
+							result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "MINIT", temp1));
+						}
+						break;
+					}
+				}
 			}
 
 			// STADD:街道名,可能包含字母,空格,逗号及句号,或者为“PO Box xxxx”,其中"xxxx"为1-4位纯数字.若为“PO
@@ -113,7 +121,7 @@ public class RegEx {
 				}
 				if (tuple.getValue("APMT").length() > 0){
 					if (tuple.set("APMT", "")){
-						result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "APMT", ""));	
+						result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "APMT", ""));
 					}
 				}
 			} else if(!isNum.matches()&&(!tuple.getValue("STADD").equals("null"))) {
@@ -122,10 +130,10 @@ public class RegEx {
 				if (!isNum.matches()) {
 					tuple.set("STADD", "null");
 					// isNum=pattern.matcher(tuple.getValue("STADD"));
-				} 
+				}
 				pattern = Pattern.compile("[0-9][a-z][0-9]");
 				String str = tuple.getValue("APMT");
-				
+
 				isNum = pattern.matcher(str);
 				if (!isNum.matches()) {
 					if (str.length() == 3) {
@@ -137,7 +145,7 @@ public class RegEx {
 						if (l.charAt(0) >= 'a' && l.charAt(0) <= 'z')
 							str = f + l+ m;
 						if (tuple.set("APMT", str.toLowerCase())){
-							result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "APMT", str.toLowerCase()));	
+							result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "APMT", str.toLowerCase()));
 						}
 					} else
 						tuple.set("APMT", "null");
@@ -145,7 +153,7 @@ public class RegEx {
 					// RepairedCell(Integer.valueOf(tuple.getValue(0)),
 					// "APMT", str));
 				}
-				
+
 			}
 
 			// CITY:城市名,可能包含字母+五种标点符号'-/. (空格也算一种)
@@ -157,28 +165,41 @@ public class RegEx {
 				// tuple.getValue("CITY")));
 				tuple.set("CITY", "null");
 			}
-			
+
+			//STATE:所在州缩写,为美国的50个州的简称
+			ArrayList<String> up=new ArrayList<String>(Arrays.asList("VT", "RI", "HI", "NY", "NV", "TN", "CA", "VI", "OK", "ME", "VA", "OH", "DE", "ID", "WY", "FM", "IA", "FL", "MD", "MA", "SD", "SC", "AR", "UT", "IL", "IN", "CT", "WV", "MN", "DC", "AZ", "KY", "MO", "KS", "OR", "MT", "LA", "GU", "NH", "WA", "NJ", "PR", "NM", "AK", "TX", "CO", "PA", "NC", "ND", "NE"));
+			ArrayList<String> low=new ArrayList<String>(Arrays.asList("tn", "ca", "vi", "vt", "ri", "hi", "ny", "nv", "de", "id", "wy", "fm", "ia", "fl", "md", "ma", "ok", "me", "va", "oh", "mn", "dc", "az", "ky", "mo", "ks", "or", "mt", "sd", "sc", "ar", "ut", "il", "in", "ct", "wv", "ak", "tx", "co", "pa", "nc", "nd", "ne", "la", "gu", "nh", "wa", "nj", "pr", "nm"));
 			pattern = Pattern.compile("[A-Z][A-Z]");
 			temp = tuple.getValue("STATE");
-			isNum = pattern.matcher(temp);
-			if (!isNum.matches()) {
-				// result.add(new
-				// RepairedCell(Integer.valueOf(tuple.getValue(0)), "CITY",
-				// tuple.getValue("CITY")));
-				char c1 =temp.charAt(0); 
-				char c2 =temp.charAt(0); 
-				if (((c1 >= 'a' && c1 <= 'z') || (c1 >= 'A' && c1 <= 'Z')) &&
-						((c2 >= 'a' && c2 <= 'z') || (c2 >= 'A' && c2 <= 'Z'))&&
-						!((c1 >= 'A' && c1 <= 'Z') && (c2 >= 'A' && c2 <= 'Z'))
-						){
-					if (tuple.set("STATE", tuple.getValue("STATE").toUpperCase())){
-						result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "STATE", tuple.getValue("STATE").toUpperCase()));	
-					}
-				}else{
-					tuple.set("STATE", "null");
+			if(low.contains(temp))
+			{
+				if(tuple.set("STATE", temp.toUpperCase())){
+					result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "STATE", temp.toUpperCase()));
 				}
-				
 			}
+			else if(!up.contains(temp))
+			{
+				tuple.set("STATE", "null");
+			}
+//			isNum = pattern.matcher(temp);
+//			if (!isNum.matches()) {
+//				// result.add(new
+//				// RepairedCell(Integer.valueOf(tuple.getValue(0)), "CITY",
+//				// tuple.getValue("CITY")));
+//				char c1 =temp.charAt(0);
+//				char c2 =temp.charAt(0);
+//				if (((c1 >= 'a' && c1 <= 'z') || (c1 >= 'A' && c1 <= 'Z')) &&
+//						((c2 >= 'a' && c2 <= 'z') || (c2 >= 'A' && c2 <= 'Z'))&&
+//						!((c1 >= 'A' && c1 <= 'Z') && (c2 >= 'A' && c2 <= 'Z'))
+//						){
+//					if (tuple.set("STATE", tuple.getValue("STATE").toUpperCase())){
+//						result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "STATE", tuple.getValue("STATE").toUpperCase()));
+//					}
+//				}else{
+//					tuple.set("STATE", "null");
+//				}
+//
+//			}
 		}
 		return result;
 	}

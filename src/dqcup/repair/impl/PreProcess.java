@@ -2,6 +2,7 @@ package dqcup.repair.impl;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -33,6 +34,8 @@ public class PreProcess {
 		}
 		
 		newTuple.add(next);
+		
+		 
 		/*
 		PrintStream ps;
 		try {
@@ -42,7 +45,7 @@ public class PreProcess {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}  
-		  
+		
 		System.out.println("RUID:CUID:SSN:FNAME:MINIT:LNAME:STNUM:STADD:APMT:CITY:STATE:ZIP");
 		for(iterator = newTuple.iterator();iterator.hasNext();){
 			current = iterator.next();
