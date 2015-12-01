@@ -69,7 +69,6 @@ public class FD1 {
                                 for (int i=1; i<= personLastRecord.number; i++){
                                     result.add(new RepairedCell(RUID-i, "ZIP", record.maxKey));
                                 }
-
                             }
                         }
                     }

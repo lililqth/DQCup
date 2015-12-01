@@ -115,7 +115,7 @@ public class RegEx {
 						result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "APMT", ""));	
 					}
 				}
-			} else if(!isNum.matches()&&tuple.getValue("STADD")!="null") {
+			} else if(!isNum.matches()&&(!tuple.getValue("STADD").equals("null"))) {
 				pattern = Pattern.compile("[A-Za-z\\s\\,\\.]+");
 				isNum = pattern.matcher(tuple.getValue("STADD"));
 				if (!isNum.matches()) {
@@ -158,14 +158,25 @@ public class RegEx {
 			}
 			
 			pattern = Pattern.compile("[A-Z][A-Z]");
-			isNum = pattern.matcher(tuple.getValue("STATE"));
+			temp = tuple.getValue("STATE");
+			isNum = pattern.matcher(temp);
 			if (!isNum.matches()) {
 				// result.add(new
 				// RepairedCell(Integer.valueOf(tuple.getValue(0)), "CITY",
 				// tuple.getValue("CITY")));
-				if (tuple.set("STATE", tuple.getValue("STATE").toUpperCase())){
-					result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "STATE", tuple.getValue("STATE").toUpperCase()));	
+				char c1 =temp.charAt(0); 
+				char c2 =temp.charAt(0); 
+				if (((c1 >= 'a' && c1 <= 'z') || (c1 >= 'A' && c1 <= 'Z')) &&
+						((c2 >= 'a' && c2 <= 'z') || (c2 >= 'A' && c2 <= 'Z'))&&
+						!((c1 >= 'A' && c1 <= 'Z') && (c2 >= 'A' && c2 <= 'Z'))
+						){
+					if (tuple.set("STATE", tuple.getValue("STATE").toUpperCase())){
+						result.add(new RepairedCell(Integer.valueOf(tuple.getValue(0)), "STATE", tuple.getValue("STATE").toUpperCase()));	
+					}
+				}else{
+					tuple.set("STATE", "null");
 				}
+				
 			}
 		}
 		return result;
