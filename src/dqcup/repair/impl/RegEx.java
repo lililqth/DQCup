@@ -44,6 +44,7 @@ public class RegEx {
 			temp = tuple.getValue("FNAME");
 			isNum = pattern.matcher(temp);
 			if (!isNum.matches()) {
+				
 				char c = temp.charAt(0);
 				if (c >= 'a' && c <= 'z') {
 					temp = temp.replaceFirst(temp.substring(0, 1), temp.substring(0, 1).toUpperCase());
@@ -77,7 +78,7 @@ public class RegEx {
 			}
 
 			// MINIT:中间名缩写,可为空,或为1位大写字母
-			pattern = Pattern.compile("[A-Z]*");
+			pattern = Pattern.compile("[A-Z]?");
 			temp = tuple.getValue("MINIT");
 			isNum = pattern.matcher(temp);
 			if (!isNum.matches()) {

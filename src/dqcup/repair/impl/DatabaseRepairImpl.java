@@ -48,7 +48,8 @@ public class DatabaseRepairImpl implements DatabaseRepair {
 		// FNAME STNUM 决定 APMT
 		FD3 fd3 = new FD3(tuples);
 		result.addAll(fd3.repair());
-
+		
+//		System.out.println(tuples);
 		return result;
 	}
 }
