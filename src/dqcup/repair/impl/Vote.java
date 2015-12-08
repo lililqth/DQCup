@@ -14,14 +14,15 @@ public class Vote {
 	public LinkedList<Tuple> tuples;
 	private String[] itemNameList = { "RUID", "CUID", "SSN", "FNAME", "MINIT", "LNAME", "STNUM", "STADD", "APMT",
 			"CITY", "STATE", "ZIP" };
+	HashSet<RepairedCell> result;
 
 	public Vote(LinkedList<Tuple> tup) {
 		this.tuples = tup;
 	}
 
 	public HashSet<RepairedCell> repair() {
-		HashSet<RepairedCell> result = new HashSet<RepairedCell>();
-		Record record = null;
+		result = new HashSet<RepairedCell>();
+		Record record = new Record();
 		Iterator<Tuple> iterator = tuples.iterator();
 		Tuple current = null;
 
@@ -32,18 +33,21 @@ public class Vote {
 			boolean equal = current.getValue("CUID").equals(next.getValue("CUID"));
 			if (equal) {
 				if (record == null) {
-					record = new Record();
-				}
+                    record = new Record();
+                }
 				addRecord(current, record);
 				if (!iterator.hasNext()) {
 					addRecord(next, record);
 				}
-			} else if (record != null) {
-				addRecord(current, record);
+			}
+			if (((!equal) && record != null) || (equal && !iterator.hasNext())){
+				if (!equal) {
+                    addRecord(current, record);
+                }
 				// 投票
 				for (int i = 0; i < 10; i++) {
 					HashMap<String, ArrayList<String>> map = record.valueMap[i];
-					if (map.size() > 1 && record.maxLength[i] >= 1) {
+					if (map.size() >= 1 && record.maxLength[i] >= 1) {
 
 						Iterator iter = map.entrySet().iterator();
 						while (iter.hasNext()) {
@@ -53,8 +57,9 @@ public class Vote {
 							if (val.size() < record.maxLength[i] || key.equals("null")) {
 								for (String str : val) {
 									int RUID = Integer.parseInt(str);
+									Tuple tup = record.tupleMap.get(str);
 									String name = this.itemNameList[i + 2];
-									if (current.set(name, record.maxKey[i])){
+									if (tup.set(name, record.maxKey[i])) {
 										result.add(new RepairedCell(RUID, name, record.maxKey[i]));
 									}
 								}
@@ -64,8 +69,6 @@ public class Vote {
 				}
 				// 刷新
 				record = null;
-			} else {
-				continue;
 			}
 		}
 		return result;
@@ -74,6 +77,8 @@ public class Vote {
 	// 在 Record 记录表中添加一条记录
 	private void addRecord(Tuple current, Record record) {
 		// 建立value->RUID_List对，对每一个tuple的10个属性进行处理
+		String RUID = current.getValue("RUID");
+		record.tupleMap.put(RUID, current);
 		for (int i = 2; i < 12; i++) {
 			String value = current.getValue(this.itemNameList[i]);
 			// 如果value在key中已经存在了， 就直接把RUID加入对应的list
@@ -102,6 +107,7 @@ class Record {
 	public HashMap[] valueMap = new HashMap[10];
 	public int[] maxLength; // 每一个字段的最高票数
 	public String[] maxKey;// 每一个字段最高票数对应的key
+	public HashMap<String, Tuple> tupleMap = new HashMap<String, Tuple>();
 
 	public Record() {
 		for (int i = 0; i < 10; i++) {

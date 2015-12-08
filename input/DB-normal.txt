@@ -9774,7 +9774,7 @@ RUID:CUID:SSN:FNAME:MINIT:LNAME:STNUM:STADD:APMT:CITY:STATE:ZIP
 9772:52471:000000000:Wolfrum:V:Naftzger:409:Lovellette Avenue:1g7:Jamestown:RI:02835
 9773:52471:000000000:Wolfrum:V:Naftzger:409:Lovellette Avenue:17g:Jamestown:RI:02835
 9774:52471:000000000:Wolfrum:V:Naftzger:409:Lovellette Avenue:17g:Jamestown:RI:02835
-9775:52471:000000000:Wolfrum:V:Naftzger:409:Lovellette Avenue:17g:Jamestown:RI:02835
+9775:52471:000000000:Wolfrum:V:Naftzger:409:Lovellette Avenue:1g7:Jamestown:RI:02835
 9776:52472:732514642:Allouard:O:Gilbert:495:Light Ln:0q7:Park City:KY:42160
 9777:52472:732514642:Allouard:O:Gilbert:495:Light Ln:0q7:Park City:KY:42160
 9778:52472:732514642:Allouard:O:Gilbert:495:Light Ln:0q7:Park City:KY:42160

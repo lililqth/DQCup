@@ -24,7 +24,7 @@ public class FD3 {
         Collections.sort(tuples, new TupleCompare_FNAME_STNUM()); // 排序
 
         HashSet<RepairedCell> result = new HashSet<RepairedCell>();
-        RecordXY record = null;
+        RecordXY record = new RecordXY();
         Iterator<Tuple> iterator = tuples.iterator();
         Tuple current = null;
         Tuple next = iterator.next();
@@ -46,8 +46,11 @@ public class FD3 {
                 if (!iterator.hasNext()){
                     addRecord(next, record);
                 }
-            } else if (record != null) {
-                addRecord(current, record);
+            }
+            if (((!equal) && record != null) || (equal && !iterator.hasNext())) {
+				if (!equal) {
+					addRecord(current, record);
+				}
                 // 投票
                 HashMap<String, ArrayList<String>> map = record.valueMap;
                 if (map.size() > 1 && record.maxLength >= 1) {
@@ -62,13 +65,15 @@ public class FD3 {
 
                                 //将这个人的最后一条记录修改过来
                                 Tuple personLastRecord = record.tupleMap.get(str);
-                                if(personLastRecord.set("ZIP", record.maxKey)){
+                                if(personLastRecord.set("APMT", record.maxKey)){
                                 	result.add(new RepairedCell(RUID, "APMT", record.maxKey));
                                 }
 
                                 // 将这个人的每一条记录全部修改过来
                                 for (int i=1; i<= personLastRecord.number; i++){
-                                    result.add(new RepairedCell(RUID-i, "APMT", record.maxKey));
+                                	if(Tuple.set(String.valueOf(RUID-i), "APMT", record.maxKey)){
+                                		result.add(new RepairedCell(RUID-i, "APMT", record.maxKey));
+                                	}
                                 }
 
                             }
@@ -77,8 +82,6 @@ public class FD3 {
                 }
                 // 刷新
                 record = null;
-            } else {
-                continue;
             }
         }
         return result;

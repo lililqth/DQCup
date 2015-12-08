@@ -23,7 +23,7 @@ public class FD1 {
         Collections.sort(tuples, new TupleCompare_STADD_CITY()); // 排序
 
         HashSet<RepairedCell> result = new HashSet<RepairedCell>();
-        RecordXY record = null;
+        RecordXY record = new RecordXY();
         Iterator<Tuple> iterator = tuples.iterator();
         Tuple current = null;
         Tuple next = iterator.next();
@@ -45,8 +45,10 @@ public class FD1 {
                 if (!iterator.hasNext()){
                     addRecord(next, record);
                 }
-            } else if (record != null) {
-                addRecord(current, record);
+            } if (((!equal) && record != null) || (equal && !iterator.hasNext())) {
+				if (!equal) {
+					addRecord(current, record);
+				}
                 // 投票
                 HashMap<String, ArrayList<String>> map = record.valueMap;
                 if (map.size() > 1 && record.maxLength >= 1) {
@@ -67,7 +69,9 @@ public class FD1 {
 
                                 // 将这个人的每一条记录全部修改过来
                                 for (int i=1; i<= personLastRecord.number; i++){
-                                    result.add(new RepairedCell(RUID-i, "ZIP", record.maxKey));
+                                	if(Tuple.set(String.valueOf(RUID-i), "ZIP", record.maxKey)){
+                                		 result.add(new RepairedCell(RUID-i, "ZIP", record.maxKey));
+                                	 }
                                 }
                             }
                         }
@@ -75,8 +79,6 @@ public class FD1 {
                 }
                 // 刷新
                 record = null;
-            } else {
-                continue;
             }
         }
         return result;

@@ -13,6 +13,17 @@ public class Tuple {
 		return cells;
 	}
 	
+	public static boolean set(String RUID, String key, String value){
+		boolean judge = isModified.contains(RUID + key);
+		if (judge == false){
+			if (!value.equals("null")){
+				isModified.add(RUID+key);
+			}
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean set(String key, String value){
 		String RUID = this.getCells().get("RUID");
 		boolean judge = isModified.contains(RUID+key);
